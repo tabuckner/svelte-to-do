@@ -6,7 +6,19 @@
   let value: string;
   let inputInvalid: boolean = false;
 
+  const baseButtonCssClasses =
+    "flex-initial bg-blue-100 hover:bg-blue-200 rounded-xl p-2 mb-2 focus:outline-none focus:ring-2 focus:ring-blue-600 w-20";
+
+  $: buttonShouldBeDisabled = inputInvalid || !value || value.trim().length < 1;
+  $: buttonCssClasses = buttonShouldBeDisabled
+    ? `${baseButtonCssClasses} opacity-50 cursor-not-allowed`
+    : baseButtonCssClasses;
+
   const onCreateNewToDo = () => {
+    if (buttonShouldBeDisabled) {
+      return;
+    }
+
     const nextToDo: ToDoModel = {
       id: Math.random(),
       content: value,
@@ -30,7 +42,7 @@
     if (value && value.trim().length === 0) {
       inputInvalid = false;
     }
-  }
+  };
 </script>
 
 <div class="flex">
@@ -43,8 +55,9 @@
     on:blur={onBlur}
   />
   <button
-    class="flex-initial bg-blue-100 hover:bg-blue-200 rounded-xl p-2 mb-2 focus:outline-none focus:ring-2 focus:ring-blue-600 w-20"
+    class={buttonCssClasses}
     on:click={onCreateNewToDo}
+    disabled={buttonShouldBeDisabled}
   >
     <span class="fa fa-plus text-blue-500" />
   </button>
